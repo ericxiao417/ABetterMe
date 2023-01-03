@@ -2,3 +2,59 @@
 
 版本控制系统，Version Control System, 可以理解为一个‘数据库’，在需要的时候，它可以帮你完整的保存一个项目的快照。当你需要查看之前的一个版本时，VCS可以显示出当前版本与上一个版本之间的细节的改动。
 
+## 基本流程
+
+**仓库：** 是VCS中最基本的模块，Repository。可以把一个仓库想象成一个数据库，存放了所有的版本和元数据。在Git中，仓库只是一个在你的项目的根目录下的名为".git"的隐藏文件夹。
+
+
+
+**创建Git仓库：** 
+
+```shell
+cd path/to/project/folder
+git init
+```
+
+**忽略文件：** 被放在项目根目录中一个被称之为".gitignore"的文件中。这里强烈建议在做第一次提交之前，首先定义好这个忽略文件列表。因为一旦这些文件被提交了，想要再次把他们清除很麻烦。
+
+- 忽略一个特定的文件：给出从根目录开始的路径和文件名，path/to/file.ext。
+- 忽略项目下所有这个名字的文件：只要给出文件的全名，不要包括任何路径，filename.ext。
+- 忽略项目下所有这个类型的文件：*.ext 。
+- 忽略一个特定目录下的所有文件：path/to/folder/*。
+
+**克隆远程仓库：** git clone + remote repository url。
+
+- 对于http and git协议，不需要任何权限。
+- 对于https协议，可能会需要输入用户名和密码。
+- 对于ssh协议，必须要通过一个SSH Public Key的认证。
+
+**仓库中一个文件的状态：** 
+
+- 未被追踪的文件(untracked): 这个文件还未被纳入VCS中，表示VCS不能追踪它的改动。
+- 已被追踪的文件(tracked): 已经被纳入VCS中，Git会监视它的任何改动。
+
+**暂存区(Staging Area):** 这是Git最强大的功能，它可以让你来确定哪些文件将被打包到下次提交中。
+
+- Changes not staged for commit: 改动的文件没有打包到下次提交中。
+- Changes to be commited: 改动的文件，已经打包到下次的提交中。
+- Untracked files: 未被追踪的文件。
+
+**提交注释commit message:** 花一点时间写一个好的commit message是非常重要的。写一个简短的标题，不要超过50个字符，然后使用一个空行来分隔注释的内容。注释的内容尽可能的包含两个问题：为什么要做这次修改和改动了哪些。Git会为你打开一个文本编辑器，具体哪个文本编辑器，可以在core.editor里面设置它。
+
+
+
+==注：== 一次commit只对应一个相关的改动，不要在一个commit中提交无关的改动，每一种不同的改动都要打包在不同的commit中。
+
+
+
+每次commit都包含以下的元数据：
+
+- Commit Hash: 40位字符的校验码。
+- Author Name & Email
+- Date
+- Commit Message
+
+使用 git log -p 查看更具体的改动。
+
+
+
