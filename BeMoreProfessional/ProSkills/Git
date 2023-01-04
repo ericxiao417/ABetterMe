@@ -56,5 +56,67 @@ git init
 
 使用 git log -p 查看更具体的改动。
 
+# 分支
 
+## 暂时保存更改
+
+一个已经commit的改动会被永久的保存到仓库中。当需要暂时性的保存一下本地改动时，可以用git stash。
+
+
+
+**stash,** 储藏，可以把stash想象成一个剪切板，他会获取你工作副本中的所有改动，并且保存起来。这样，你就会得到一个干净的工作区域，也就是一个不存在任何改动的工作目录。
+
+
+
+之后，随时都可以重新调回那些保存起来的改动到工作区域，从而继续未完成的工作。可以建立多个stash。
+
+
+
+```shell
+git stash
+saved working directory and index state WIP on master:....
+HEAD is now at ...
+
+git status
+# On branch master
+nothing to commit(working directory clean)
+```
+
+当想把保存起来的改动调回到工作区域时，可以进行如下操作：
+
+```shell
+git stash list
+stash@{0}: WIP on master: ....
+```
+
+**最新建立的stash会被显示在列表的最上面，被命名为 stash@{0}。** 在此之前建立的stash，就从1开始，1,2,3...
+
+
+
+当想调回一个之前的stash的时候，有如下两种方法：
+
+1. 使用git stash pop命令，它将调回最新的一个存储单元，并且把它从存储中删掉。
+2. 使用 git stash apply <stashname> 命令，它将调回所给出的存储单元，而这个改动还会存在。可以随时用 git stash drop <stashname> 来删除它。
+
+## HEAD
+
+说简单一点，HEAD就是当前活跃分支的游标。在新建立仓库时，Git会预先把HEAD指向master分支。
+
+
+
+形象一点说，就是，你现在在哪，HEAD就指向哪，所以Git才知道你在哪。
+
+
+
+不过HEAD并非只能指向分支的最顶端，即时间节点距今最近的那个，实际上它可以指向任何一个节点，它就是Git内部用来追踪当前位置的东西。
+
+
+
+HEAD: 表示 current branch, 即当前所在的分支。当用git checkout切换分支的时候，HEAD会重新指向新的分支。有的时候HEAD会指向一个没有名字的分支，这种情况叫做"detached HEAD"。
+
+
+
+head：是commit对象的引用，每个head都有一个名字。
+
+# 合并改动
 
