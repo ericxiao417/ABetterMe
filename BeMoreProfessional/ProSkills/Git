@@ -120,3 +120,19 @@ head：是commit对象的引用，每个head都有一个名字。
 
 # 合并改动
 
+## Git merge
+
+在Git中，进行合并非常简单，只需要以下两个步骤：
+
+1. 切换到那个需要接收改动的分支上。
+2. 执行 git merge，并且在后面加上那个将要合并进来的分支的名称。
+
+将 contact-form合并到master当中去：
+
+```shell
+git checkout master
+git merge contact-form
+```
+
+# 撤销操作
+
