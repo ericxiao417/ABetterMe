@@ -1,0 +1,64 @@
+# 示例
+
+```python
+from selenium import webdriver
+from time import sleep
+
+# 实例化一款浏览器
+bro = webdriver.Chrome(executable_path='chromedriver.exe')
+# 对指定的url发起请求
+bro.get('www.google.com')
+sleep(1)
+# 进行标签定位
+search_input = bro.find_element_by_id('key')
+# 向搜索框中输入关键词
+search_input.send_keys('mac pro')
+
+# 点击搜索按钮
+button = bro.find_element_by_xpath('....')
+button.click()
+sleep(2)
+```
+
+# 元素定位
+
+|        定位一个元素        |        定位多个元素         |          含义          |
+| :------------------------: | :-------------------------: | :--------------------: |
+|     find_element_by_id     |     find_elements_by_id     |     通过元素id定位     |
+|    find_element_by_name    |    find_elements_by_name    |    通过元素name定位    |
+|   find_element_by_xpath    |   find_elements_by_xpath    |   通过xpath定位元素    |
+|  find_element_by_tag_name  |  find_elements_by_tag_name  | 通过tag name来定位元素 |
+| fint_element_by_class_name | find_elements_by_class_name |   通过类名来定位元素   |
+
+find_element_by_xxx: 找的是符合条件的第一个标签。
+
+find_elements_by_xxx: 找的是符合条件的所有标签。
+
+根据id，xpath获取，它们返回的结果一致。
+
+# xpath的写法
+
+```python
+dr.find_element_by_xpath("//*[@id='kw']")
+("//*[@name='wd']")
+("//input[@class='s_ipt']")
+("/html/body/form/span/input")
+("//span[@class='soutu-btn']/input")
+("//form[@id='form']/span/input")
+("//input[@id='kw' and @name='wd']")
+```
+
+# 操作元素方法
+
+|         方法         |          说明          |
+| :------------------: | :--------------------: |
+|        back()        |     控制浏览器后退     |
+|      forward()       |     控制浏览器前进     |
+|      refresh()       |      刷新当前页面      |
+|       clear()        |        清除文本        |
+|   send_keys(value)   |      模拟按键输入      |
+|       click()        |        单击元素        |
+|       submit()       |        提交表单        |
+| get_attributed(name) |     获取元素属性值     |
+|    is_displayed()    | 设置该元素是否用户可见 |
+
