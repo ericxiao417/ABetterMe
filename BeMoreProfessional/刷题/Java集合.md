@@ -49,6 +49,10 @@ List<String> list = new ArrayList<>();
 
 堆。大顶堆和小顶堆，也称作是优先队列，数组实现的二叉树。
 
+## 栈
+
+实现栈用deque： Deque<Integer> stack = new LinkedList<>();
+
 ## Map
 
 无序，key唯一，value不唯一。

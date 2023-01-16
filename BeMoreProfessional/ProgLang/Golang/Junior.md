@@ -896,3 +896,78 @@ type a struct {
 
 ## 实例化
 
+Go语言中结构体定义之后，不能直接使用，因为还没有分配内存。必须在定义完结构体，并且实例化以后，才能使用结构体。
+
+Golang中结构体的实例化主要有三种方式，分别是：使用变量定义的方式、使用new分配内存和使用&定义结构体。
+
+### 变量定义方式
+
+var varName StructName
+
+varName: 结构体变量名。
+
+StructName: 结构体类型。
+
+使用var关键字定义一个名为StructName的结构体的变量varName，后续可以直接使用varName。
+
+### 使用new分配内存
+
+var varName = new(StructName)
+
+### 使用&定义结构体
+
+var varName = &StructName{}
+
+使用&定义结构体时，结构体名称后面必须要有{}。
+
+```go
+func main() {
+  type Student struct {
+    Name string
+    Age int
+    Score float64
+  }
+  // var stu = new(Student)
+  // var stu = &Student{}
+  var stu Student
+  stu.Name = 'Jack'
+  stu.Age = 32
+  stu.Score = 98.5
+}
+```
+
+## 初始化结构体
+
+Go语言中结构体变量的初始化有两种方式，分别为：使用列表对字段挨个赋值和使用键值对的方式。
+
+### 列表初始化结构体
+
+使用列表对字段挨个赋值的方式初始化，那么结构体的每个字段都要被赋值，否则报错。并且我们使用列表初始化的方式定义结构体时，最后一个字段也需要加逗号结尾。
+
+```go
+varName := StructName {
+  Field1Value,
+  Field2Value,
+  Field3Value,
+  ....,
+}
+```
+
+```go
+func main() {
+	type Student struct {
+		Name stirng,
+		Age int,
+    Score float64
+	}
+  
+  var stu = Student{
+    "Jack",
+    18,
+    98.4,
+  }
+}
+```
+
+### 键值对初始化结构体
+
