@@ -1,0 +1,395 @@
+# 概述
+
+只要前面有可以走的路，就会一直向前走，直到无路可走才会回头。
+
+无路可走有两种情况：1. 遇到了墙。2. 遇到了已经走过的路。
+
+在无路可走的时候，沿着原路返回，直到回到了还未走过路的路口，尝试继续走没有走过的路径。
+
+有一些路径没有走到，这是因为找到了出口，程序就停止了。
+
+# 树的深度优先遍历
+
+## 前序遍历
+
+对于任意一棵子树，先输出它的根节点，再递归输出它的左子树的所有节点，最后输出右子树的所有节点。
+
+## 中序遍历
+
+对于任意一棵子树，先递归输出左子树的所有节点，然后输出根节点，最后递归输出右子树的所有节点。
+
+## 后序遍历（重要）
+
+对于任意一棵子树，先递归输出左子树的所有节点，然后递归输出右子树的所有节点，最后输出根节点。后序遍历体现的思想是：必须先得到左右子树的结果，才能得到当前子树的结果，这一点在解决一些问题的过程中非常有用。
+
+# 图的深度优先遍历
+
+TODO
+
+# 练习题
+
+跟树有关的深度遍历，大部分情况下是从下而上，也就是满足三部曲：
+
+1. 从左子树和右子树获取什么。
+2. 在当前层处理什么。
+3. 向父节点返回什么。
+
+```java
+class TreeNode {
+  int val;
+  TreeNode left;
+  TreeNode right;
+  public TreeNode(int val) {
+    this.val = val;
+  }
+  public TreeNode(int val, TreeNode left, TreeNode right) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+```
+
+## 求二叉树的最大高度
+
+```java
+public int maxDepth(TreeNode root) {
+  if (root == null) return 0;
+  int left = maxDepth(root.left);
+  int right = maxDepth(root.right);
+  int height = Math.abs(left, right) + 1;
+  return height;
+}
+```
+
+## 求二叉树的最小高度
+
+此题有个小坑，它是指从根节点到最近的叶子节点的最少的节点数。如下图：
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20221222150503589.png" alt="image-20221222150503589" style="zoom: 25%;" />
+
+这棵树的最小高度，不是1，因为根节点无左子树，所以它的最小深度，只能是从根节点到右子树叶子节点的最小深度。
+
+```java
+public int minDepth(TreeNode root) {
+  if (root == null) return 0;
+  int left = minDepth(root.left);
+  int right = minDepth(root.right);
+  if (root.left == null) {
+    return right + 1;
+  } else if (root.right == null) {
+    return left + 1;
+  } else {
+    return Math.min(left, right) + 1;
+  }
+}
+```
+
+## 路径总和
+
+给定一个二叉树的根节点root和一个表示目标和的整数target，判断该树中是否存在从根节点到叶子节点的路径，路径上的所有节点的和等于target。如果有，返回true，否则返回false。
+
+```java
+public boolean hasPathSum(TreeNode root, int target) {
+  if (root == null) return false;
+  if (root.left == null && root.right == null && root.val == target) return true;
+  boolean left = hasPathSum(root.left, target - root.val);
+  boolean right = hasPathSum(root.right, target - root.val);
+  return left || right;
+}
+```
+
+## 翻转二叉树
+
+给一棵二叉树的根节点root，翻转这棵二叉树，并返回根节点。
+
+```java
+public TreeNode invertTree(TreeNode root) {
+  if (root == null) return root;
+  //从上往下
+  TreeNode tmp = root.left;
+  root.left = root.right;
+  root.right = tmp;
+  invertTree(root.left);
+  invertTree(root.right);
+  return root;
+}
+```
+
+## 相同的树
+
+判断两棵二叉树是否相同。
+
+```java
+public boolean isSame(TreeNode p, TreeNode q) {
+  if (p == null && q == null) return true;
+  if (p == null || q == null) return false;
+  if (p.val != q.val) return false;
+  if (p.val == q.val) {
+    boolean left = isSame(p.left, q.left);
+    boolean right = isSame(p.right, q.right);
+    return left && right;
+  }
+  return false;
+}
+```
+
+## 对称二叉树
+
+给定一棵二叉树，判断是否为轴对称。
+
+```java
+public boolean isSymmetric(TreeNode root) {
+  if (root == null) return true;
+  return helper(root.left, root.right);
+}
+
+private boolean helper(TreeNode p, TreeNode q) {
+  if (p == null && q == null) return true;
+  if (p == null || q == null) return false;
+  if (p.val != q.val) return false;
+  boolean left = helper(p.left, q.right);
+  boolean right = helper(p.right, q.left);
+  return left && right;
+}
+```
+
+## 从根到叶子节点的数字之和
+
+给一个二叉树的根节点root，树中每个节点都存放一个0-9的数字。计算从根节点到叶节点的数字之和。
+
+比如：从根节点到叶子节点的路径是 1-> 2 -> 3，那么表示数字123。
+
+```java
+public int sumNumers(TreeNode root) {
+  if (root == null) return 0;
+  List<Integer> ret = new ArrayList<>();
+  int[] num = new int[1];
+  num[0] = 0;
+  dfs(root, num[0], ret);
+  int sum = 0;
+  for (int r : ret) {
+    sum += r;
+  }
+  return sum;
+}
+
+private void dfs(TreeNode root, int sum, List<Integer> ret) {
+  if (root != null) {
+    sum = sum * 10 + root.val;
+    if (root.left == null && root.right == null) {
+      ret.add(sum);
+      return;
+    }
+  }
+  if (root.left != null) {
+    dfs(root.left, sum, ret);
+  }
+  if (root.right != null) {
+    dfs(root.right, sum, ret);
+  }
+}
+```
+
+## 从前序与中序遍历中构造二叉树
+
+给定两个整数数组preorder和inorder，请构造二叉树。
+
+**思路：** 
+
+1. 前序遍历的第一个点为根节点。
+2. 根节点是中序遍历的分割点，左子树i个节点，右子树剩余的节点。
+3. 前序左子树：1 - i， 右子树：i + 1  - N
+4. 中序左子树：0 - i - 1，右子树： i + 1 - N
+
+```java
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+  if (preorder.length == null || inorder.length == 0) return null;
+  TreeNode root = new TreeNode(preorder[0]);
+  for (int i = 0; i < inorder.length; i++) {
+    if (preorder[0] == inorder[i]) {
+      // copyOfRange(): 前闭后开
+      int[] pre_left = Arrays.copyOfRange(preorder, 1, i + 1);
+      int[] pre_right = Arrays.copyOfRange(preorder, i + 1, preorder.length);
+      int[] in_left = Arrays.copyOfRange(inorder, 0, i);
+      // 要从i+1开始，因为i是根节点
+      int[] in_right = Arrays.copyOfRange(inorder, i + 1, inorder.length);
+      root.left = buildTree(pre_left, in_left);
+      root.right = buildTree(pre_right, in_right);
+      return root;
+    }
+    return root;
+  }
+}
+```
+
+## 从中序与后序遍历中构造二叉树
+
+给定一棵二叉树的中序遍历数组和后序遍历数组，还原此二叉树。
+
+**分析：**
+
+1. 在后序遍历中，最后一个元素为树的根节点。
+2. 在中序遍历中，根节点左边的树为左子树，根节点右边的树为右子树。
+
+```java
+public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (inorder.length == 0 || postorder.length == 0) return null;
+        int val = postorder[postorder.length - 1];
+        TreeNode root = new TreeNode(val);
+        for (int i = 0; i < inorder.length; i++) {
+            if (val == inorder[i]) {
+                int[] in_left = Arrays.copyOfRange(inorder, 0, i);
+                int[] in_right = Arrays.copyOfRange(inorder, i + 1, inorder.length);
+                int[] post_left = Arrays.copyOfRange(postorder, 0, i);
+                int[] post_right = Arrays.copyOfRange(postorder, i, postorder.length - 1);
+                root.left = buildTree(in_left, post_left);
+                root.right = buildTree(in_right, post_right);
+                return root;
+            }
+        }
+        return root;
+    }
+```
+
+## 前序遍历构造二叉搜索树
+
+给定一个整数数组，它表示BST的先序遍历，构造树并返回根节点。
+
+**思路：**
+
+1. 根据前序遍历的特点，根节点在第一位，后面连接着左子树和右子树。
+2. 根据BST的特点，左子树都比根节点的值小，右子树都比根节点的值大。
+
+```java
+public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (inorder.length == 0 || postorder.length == 0) return null;
+        int val = postorder[postorder.length - 1];
+        TreeNode root = new TreeNode(val);
+        for (int i = 0; i < inorder.length; i++) {
+            if (val == inorder[i]) {
+                int[] in_left = Arrays.copyOfRange(inorder, 0, i);
+                int[] in_right = Arrays.copyOfRange(inorder, i + 1, inorder.length);
+                int[] post_left = Arrays.copyOfRange(postorder, 0, i);
+                int[] post_right = Arrays.copyOfRange(postorder, i, postorder.length - 1);
+                root.left = buildTree(in_left, post_left);
+                root.right = buildTree(in_right, post_right);
+                return root;
+            }
+        }
+        return root;
+    }
+```
+
+## 从先序遍历还原二叉树
+
+从二叉树的根节点开始进行深度优先搜索。
+
+在遍历每个节点时，输出D条短线，其中D是该节点的深度，然后输出该节点的值。如果节点的深度为0，则其直接子节点的深度为D+1， 根节点的深度为0。如果节点只有一个子节点，那么保证该节点为左子节点。给出遍历输出S，返回root。
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230115131753533.png" alt="image-20230115131753533" style="zoom:50%;" />
+
+# 栈stack
+
+在深度优先遍历中，需要将当前遍历的节点的相邻节点暂时保存起来，以便在回退时可以继续访问他们。遍历到节点的顺序呈现出后进先出的特点，因此可以用栈来保存。
+
+再者，深度优先遍历明显有递归结构，支持递归的数据结构也是栈。因此，实现深度优先遍历有以下两种方法：
+
+1. 编写递归方法。
+2. 编写栈，通过迭代方式来实现。
+
+# 二叉树的三种遍历方式的非递归实现
+
+对于二叉树的遍历，每个节点有两个处理方式：
+
+1. 输出该节点。
+2. 递归处理该节点。
+
+我们可以在节点存入栈的时候增加一个**指令信息**，ADD表示把该节点添加到结果集合中，GO表示递归处理该节点。在栈顶元素弹出的时候，读取指令信息，如果是GO，就将当前节点的左右孩子节点按照【前序遍历】（根->左->右）/【中序遍历】/【后序遍历】的倒序压入栈中。倒序是因为栈处理元素的顺序是先进后出，弹栈的时候才能会按照我们想要的顺序输出结果集。
+
+## 前序遍历
+
+非递归方式，即模拟栈：
+
+```java
+public List<Integer> preorder(TreeNode root) {
+  List<Integer> list = new ArrayList<>();
+  if (root == null) {
+    return list;
+  }
+  Deque<TreeNode> stack = new LinkedList<>();
+  stack.offerFirst(root);
+  while (!stack.isEmpty()) {
+    TreeNode node = stack.pollFirst();
+    if (node.right != null) {
+      stack.offerFirst(node.right);
+    }
+    if (node.left != null) {
+      stack.offerFirst(node.left);
+    }
+    list.add(node.val);
+  }
+  return list;
+}
+```
+
+## 中序遍历
+
+==颜色标记法：==
+
+**核心思想：**
+
+1. 使用颜色标记节点的状态，新节点为白色，已访问的节点为黑色。
+2. 如果遇到白色节点，则将其标记为黑色，然后将其右子节点、自身、左子节点依次入栈。
+3. 如果遇到黑色节点，则将其值输出。
+
+**优化：**
+
+1. TreeNode类型表示新节点，int类型表示第二次出入栈。
+2. stack是可以弹入null的，n个null值占n个位置。
+
+```java
+public List<Integer> inorder(TreeNode root) {
+  List<Integer> list = new ArrayList<>();
+  if (root == null) return list;
+  Deque<Object> stack = new LinkedList<>();
+  stack.offer(root);
+  while (!stack.isEmpty()) {
+    Object obj = stack.pollFirst();
+    if (obj instanceof TreeNode) {
+      TreeNode node = (TreeNode)obj;
+      if (node.right != null) {
+        stack.offerFirst(node.right);
+      }
+      stack.offerFirst(node.val);
+      if (node.left != null) {
+        stack.offerFirst(node.left);
+      }
+    } else {
+      int val = (Integer)obj;
+      list.add(val);
+    }
+  }
+  return list;
+}
+```
+
+# 深度优先遍历的应用
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230116220658907.png" alt="image-20230116220658907" style="zoom:50%;" />
+
+## 获得树和图的一些属性
+
+在一些树的问题中，其实就是通过一次深度优先遍历，获得树的某些属性，比如：二叉树的最大深度、最小深度、平衡二叉树、是否BST。在遍历的过程中，通常需要设计一些常量，一边遍历，一边更新设计的变量的值。
+
+**Example:**
+
+给一棵二叉树的根节点root，树中每个节点都存放有一个0-9之间的数字。每条从根节点到叶子节点的路径都代表一个数字，比如：
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230116221100687.png" alt="image-20230116221100687" style="zoom:50%;" />
+
+计算从根节点到叶子节点的所有值的和。
+
+```java
+```
+
