@@ -376,3 +376,57 @@ public List<Integer> inorder(TreeNode root) {
 
 # 深度优先遍历的应用
 
+## 无向图中的连通分量
+
+![image-20230123111816406](https://raw.githubusercontent.com/ericxiao417/Pics/main/202301231118537.png)
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/202301231119783.png" alt="image-20230123111947729" style="zoom: 33%;" />
+
+**分析：**
+
+1. 用嵌套数组创建图。
+2. 用dfs遍历每个顶点。
+
+```java
+class solution {
+    public int countComponent(int n, int[][] edges) {
+        List<Integer>[] graph = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        for (int[] edge : edges) {
+            // 因为是无向图，所以要添加双向引用
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
+        }
+        boolean[] visited = new boolean[n];
+        int ret = 0;
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                ret++;
+                dfs(i, visited, graph);
+            }
+        }
+        return ret;
+    }
+    
+    private void dfs(int point, boolean[] visited, List<Integer>[] graph) {
+        visited[point] = true;
+        List<Integer> neighbor = graph[point];
+        for (int n : neighbor) {
+            if (!visited[n]) {
+                dfs(n, visited, graph);
+            }
+        }
+    }
+}
+```
+
+## 冗余连接
+
+树可以看成是一个连通且无环的无向图。
+
+现有 往一棵n个节点（节点值是1-n）的树中添加一条边后的 图。添加的边的两个顶点在1-n之间，且这条附加的边不属于树中已经存在的边。用int\[]\[] edges表示一个图，edges\[i]\[j]表示在点i和j之间存在一条边。
+
+请找出一条可以删去的边，删除后可使得剩余部分是一棵树而不是图。如果有多个答案，则返回edges中最后出现的边。
+
