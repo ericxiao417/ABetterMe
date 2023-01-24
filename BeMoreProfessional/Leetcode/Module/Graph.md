@@ -211,7 +211,7 @@ class UnionFind {
     return root[x] = find(root[x]);
   }
   // union
-  public boolean union(int x, int y) {
+  public void union(int x, int y) {
     int rootx = find(x);
     int rooty = find(y);
     if (rootx != rooty) {
