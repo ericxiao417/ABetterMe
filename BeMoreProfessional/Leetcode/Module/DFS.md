@@ -8,6 +8,12 @@
 
 有一些路径没有走到，这是因为找到了出口，程序就停止了。
 
+**个人理解：**
+
+DFS就是递归函数，从起点到当前层，再到下一层，直到到达边界，然后返回。首先要定义出，DFS的作用是什么，其次，要考虑出边界条件，即在什么情况下需要 return 。最后，就是在当前层要做哪些事情，其实也是每一层要做哪些事情。
+
+另外，DFS不一定就是无返回，即void，也可以是int，boolean等等。
+
 # 树的深度优先遍历
 
 ## 前序遍历
@@ -436,6 +442,59 @@ class solution {
 2. 树是一个连通无环的无向图，在树中多加了一条边就会出现环，因此附加的边即为导致环出现的边。
 3. 通过并查集寻找附加的边。起初时，每个节点都是一个独立的连通分量，遍历每一条边，判断这条边连接的两个点是否属于相同的连通分量。如果属于不相同的连通分量，则说明在遍历到当前的边之前，两个顶点之间不连通，因此不会导致环的出现，合并这两个顶点的连通分量。如果属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点已经连通，因此当前的边导致环出现，即为答案。
 
+```java
+class Solution {
+    public int[] findRedundantConnection(int[][] edges) {
+        if (edges == null || edges.length == 0) return new int[0];
+        List<Integer>[] arr = new ArrayList[1];
+        arr[0] = new ArrayList<>();
+        UnionFind uf = new UnionFind(edges.length + 1);
+        for (int[] edge : edges) {
+            int start = edge[0];
+            int end = edge[1];
+            if (!uf.connected(start, end)) {
+                uf.union(start, end);
+            } else {
+                arr[0].add(start);
+                arr[0].add(end);
+            }
+        }
+        return new int[]{arr[0].get(0), arr[0].get(1)};
+    }
+}
+
+//并查集仅用于无向图
+class UnionFind {
+    int[] root;
+    public UnionFind(int size) {
+        root = new int[size];
+        for (int i = 0; i < size; i++) {
+            root[i] = i;
+        }
+    }
+    public int find(int x) {
+        if (x == root[x]) {
+            return x;
+        }
+        return root[x] = find(root[x]);
+    }
+    
+    public void union(int x, int y) {
+        int rootx = find(x);
+        int rooty = find(y);
+        if (rootx != rooty) {
+            root[rootx] = rooty;
+        }
+    }
+    
+    public boolean connected(int x, int y) {
+        return find(x) == find(y);
+    }
+}
+```
+
+
+
 ## 找到最终的安全状态
 
 有一个 n 个节点的有向图，节点按照从 0 到 n-1 编号。图由一个索引从 0 开始的2D数组graph表示，graph\[i] 是与节点 i 相邻的节点的整数数组，这意味着从节点 i 到 graph\[i] 中的每个节点都有一条边。
@@ -450,4 +509,48 @@ class solution {
 2. 安全终点的意思是：它的前驱节点可以经过有限步来到一个没有后继节点的节点。
 3. 因此这个问题就是要求我们判断一个有向图是否存在环，因此可以从一个节点开始执行深度优先遍历。
 4. 从顶点 u 出发的所有路径是不是有一条能够回到 u 的路径，有回路就返回 true。
+
+```java
+class Solution {
+    //每个节点都有三种状态，（已遍历）访问过，（已遍历）未访问，（未遍历）无结果。
+    //用Boolean而不是boolean，是因为Boolean可以接受null，而boolean不可以接受null，无法表示第三种状态。
+    Boolean[] visited;
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        List<Integer> list = new ArrayList<>();
+        if (graph == null || graph.length == 0) return list;
+        visited = new Boolean[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            if (dfs(graph, i)) {
+                continue;
+            }
+            list.add(i);
+        }
+        return list;
+    }
+    
+    // dfs的定义就是graph里的某个点是否有环
+    private boolean dfs(int[][] graph, int point) {
+        if (visited[point] != null) {
+            return visited[point];
+        }
+        //首先假设point已经访问过
+        visited[point] = true;
+        //检验point的所有相邻点是否能返回自身，如果能，则表示point有环
+        for (int i : graph[point]) {
+            if (dfs(graph, i)) {
+                return true;
+            }
+        }
+        //重置point为false，即没有环
+        visited[point] = false;
+        return false;
+    }
+}
+```
+
+## 二分图检测
+
+给定一个无向图，当这个图为二分图时，返回true。
+
+如果我们将一个图的节点集合分割成两个独立的子集A和B，并且使图中的每一条边的两个节点一个来自A，一个来自B，我们就称之为二分图。
 
