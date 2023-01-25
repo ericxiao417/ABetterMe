@@ -554,3 +554,31 @@ class Solution {
 
 如果我们将一个图的节点集合分割成两个独立的子集A和B，并且使图中的每一条边的两个节点一个来自A，一个来自B，我们就称之为二分图。
 
+```java
+public boolean isBipartite(int[][] graph) {
+  if (graph == null || graph.length == 0) {
+    return true;
+  }
+  int[] colored = new int[graph.length];
+  for (int i = 0; i < graph.length; i++) {
+    if (colored[i] == 0 && !dfs(graph, colored, 1, i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+private boolean dfs(int[] graph, int[] colored, int color, int point) {
+  if (colored[point] != 0) {
+    return colored[point];
+  }
+  colored[point] = color;
+  int[] neighbor = graph[point];
+  for (int n : neighbor) {
+    if (!dfs(graph, colored, -color, n)) {
+      return false;
+    }
+  }
+  return true;
+}
+```
