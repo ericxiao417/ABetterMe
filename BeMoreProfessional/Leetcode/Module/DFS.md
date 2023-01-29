@@ -570,7 +570,7 @@ public boolean isBipartite(int[][] graph) {
 
 private boolean dfs(int[] graph, int[] colored, int color, int point) {
   if (colored[point] != 0) {
-    return colored[point];
+    return colored[point] == color;
   }
   colored[point] = color;
   int[] neighbor = graph[point];
@@ -582,3 +582,105 @@ private boolean dfs(int[] graph, int[] colored, int color, int point) {
   return true;
 }
 ```
+
+## 平行课程
+
+![image-20230129114406873](https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230129114406873.png)
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230129114645657.png" alt="image-20230129114645657" style="zoom:50%;" />
+
+```java
+class Solution {
+    public int minimumSemesters(int n, int[][] relations) {
+        if (n == 0) return -1;
+        int[] inDegree = new int[n + 1];
+        List<Integer>[] arr = new ArrayList[n + 1];
+        for (int i = 0; i <= n; i++) {
+            arr[i] = new ArrayList<>();
+        }
+        for (int[] re : relations) {
+            int pre = re[0];
+            int next = re[1];
+            inDegree[next]++;
+            arr[pre].add(next);
+        }
+        int term = 0;
+        int left = n;
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 1; i <= n; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+                left--;
+            }
+        }
+        
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            term++;
+            for (int i = 0; i < size; i++) {
+                int tmp = queue.poll();
+                List<Integer> succesor = arr[tmp];
+                for (int s : succesor) {
+                    inDegree[s]--;
+                    if (inDegree[s] == 0) {
+                        queue.offer(s);
+                        left--;
+                    }
+                }
+            }
+        }
+        return left == 0 ? term : -1;
+    }
+}
+```
+
+## 可能的二分法
+
+![image-20230129124447600](https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230129124447600.png)
+
+```java
+class Solution {
+    public boolean possibleBipartition(int n, int[][] dislikes) {
+        // -1 表示不喜欢，1 表示喜欢， 0 表示未访问
+        int[] visited = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            visited[i] = 0;
+        }
+        List<Integer>[] arr = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            arr[i] = new ArrayList<>();
+        }
+        for (int[] dis : dislikes) {
+            int self = dis[0];
+            int another = dis[1];
+            arr[self].add(another);
+            arr[another].add(self);
+        }
+        for (int i = 1; i <= n; i++) {
+            if (visited[i] == 0 && !dfs(i, arr, visited, 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 可以把这个人成功分组
+    // flag = 1表示喜欢，-1表示不喜欢
+    private boolean dfs(int point, List<Integer>[] arr, int[] visited, int flag) {
+        if (visited[point] != 0) {
+            return visited[point] == flag;
+        }
+        List<Integer> dislike = arr[point];
+        visited[point] = flag;
+        for (int d : dislike) {
+            if (!dfs(d, arr, visited, -flag)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+# 回溯算法
+
