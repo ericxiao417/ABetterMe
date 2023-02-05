@@ -693,3 +693,37 @@ class Solution {
 ## N皇后
 
 ![image-20230129135654487](https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230129135654487.png)
+
+## 不含重复元素的全排列
+
+```java
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> list = new ArrayList<>();
+        if (nums == null || nums.length == 0) {
+            return list;
+        }
+        boolean[] used = new boolean[nums.length];
+        List<Integer> tmp = new ArrayList<>();
+        dfs(list, tmp, nums, 0, used);
+        return list;
+    }
+
+    private void dfs(List<List<Integer>> list, List<Integer> tmp, int[] nums, int index, boolean[] used) {
+        if (index == nums.length) {
+            list.add(new ArrayList<>(tmp));
+            return;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (!used[i]) {
+                tmp.add(nums[i]);
+                used[i] = true;
+                dfs(list, tmp, nums, index + 1, used);
+                used[i] = false;
+                tmp.remove(tmp.size() - 1);
+            }
+        }
+    }
+}
+```
+
