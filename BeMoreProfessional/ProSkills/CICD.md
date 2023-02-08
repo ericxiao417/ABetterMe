@@ -121,4 +121,58 @@ deploy_production:
 
 ### 构建
 
-在构建任务中，我们会用Dockerfile注入依赖，将工程打包成Docker镜像并上传。我们为这个任务定义了一些额外的属性：tag 属性可以标记
+在构建任务中，我们会用Dockerfile注入依赖，将工程打包成Docker镜像并上传。我们为这个任务定义了一些额外的属性：tag 属性可以标记这个任务将在含有特定tag的CI Runner上运行。而only属性表示只有这个commit在特定的分支下，比如master，才可以运行这个任务。
+
+### 部署
+
+我们会用kucectl set image 将我们刚刚构建的镜像发布到生产环境。这个任务的when表示运行该任务所需要的必要条件，如前一阶段任务全部成功。when: manual ，表示该操作只允许手动触发。
+
+至此，我们在.gitlab-ci.yaml中定义了一套完整才测试、构建、部署流程。          
+
+# 关键字
+
+## image
+
+该关键字指定一个任务所使用的docker镜像，例如image: python:latest 使用最新的python镜像。
+
+镜像下载的策略：
+
+- never：当使用这个策略时，会禁止GitLab Runner 从Docker Hub或其他地方下拉镜像，只能手动拉取镜像。
+- if-not-present: 当使用这个策略，Runner会优先检测本地是否有镜像。有的话就使用该镜像，没有的话再去拉取。
+- always: 这个是gitlab-ci默认的策略，即每一次都是重新下拉镜像，比较消耗时间。
+
+## services
+
+该关键字指向其他docker镜像，这些镜像会与image关键字指定的镜像绑定。比如，可以绑定一个mysql服务，存储单元测试所需要的假数据。
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230208193019254.png" alt="image-20230208193019254" style="zoom:50%;" />
+
+## before_script & after_script
+
+before_script定义了一组在每个任务开始前需要执行的命令。
+
+after_script则相反。
+
+## stage
+
+前面提到，我们可以定义一些列的任务job去执行我们想要的命令。但是，怎样指定先后顺序呢？这就需要用到stage关键字了。
+
+stage关键字一共有两个特性：
+
+1. 如果两个任务对应的stage名相同，则这两个任务会并行执行。
+2. 下一个stage关联的任务会等上一个stage执行成功后才继续运行，否则不运行。
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230208193319228.png" alt="image-20230208193319228" style="zoom:50%;" />
+
+## only/except
+
+## tag
+
+该关键字指定了使用哪个Runner（机器）去执行我们的任务。
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230208193458883.png" alt="image-20230208193458883" style="zoom:50%;" />
+
+## when
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230208193529108.png" alt="image-20230208193529108" style="zoom:50%;" />
+
