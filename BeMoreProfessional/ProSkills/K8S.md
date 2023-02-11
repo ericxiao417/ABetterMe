@@ -42,11 +42,23 @@ master组件是集群的控制平台，主要负责集群中的全局决策，�
 
 #### etcd
 
+支持一致性和高可用性的键值对存储组件，K8S集群的所有配置信息都存储在etcd上。
+
 #### kube-scheduler
+
+此master组件监控所有新创建但未分配到节点的pod，并且自动为pod选择一个合适的节点去运行。
 
 #### kube-controller-manager
 
 #### cloud-controller-manager
 
+# K8S入门
 
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230211142104356.png" alt="image-20230211142104356" style="zoom:50%;" />
+
+上图是拥有一个master节点和六个worker节点的k8s集群。
+
+<img src="https://raw.githubusercontent.com/ericxiao417/Pics/main/image-20230211142506232.png" alt="image-20230211142506232" style="zoom:50%;" />
+
+worker节点又叫作node，是虚拟机或者物理计算机，充当k8s集群中的工作计算机。每个node都有一个kubelet，它管理该节点并且与master通信。
 
