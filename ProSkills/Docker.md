@@ -196,3 +196,62 @@ docker rm [container ID or Names]
 
 # 数据管理
 
+## 数据卷
+
+​	是一个可以让多个容器使用的特殊目录，用于持久化数据以及共享容器间的数据，它以正常的文件或目录的形式存在于宿主机器上。而且，其生命周期独立于容器的生命周期，即删除容器时，数据卷不会删除。
+
+### volume
+
+它是Docker管理宿主机文件系统的一部分，默认保存于/var/lib/docker/volumes，其默认名为一串很长的ID。
+
+![Docker 查看本地数据卷](https://raw.githubusercontent.com/ericxiao417/Pics/main/202306212120630.jpeg)
+
+```shell
+# 创建数据卷
+docker volume create test-vol
+# 查看所有的volume
+docker volume ls
+# 查看指定卷信息
+docker volume inspect test-vol
+# 删除数据卷
+docker volume rm test-vol
+# 统一删除数据卷
+docker volume prune
+```
+
+### 运行容器时挂载数据卷
+
+#### 1. -v
+
+`````
+docker run -d -it --name=test-nginx -p 8011:80 -v test-vol:/usr/share/nginx/html nginx:1.13.12
+`````
+
+-d: 后台运行容器
+
+--name=test-ngin: 指定容器名为test-nginx
+
+-p 8011:80 : 将容器的80端口挂载到宿主机的8011端口
+
+-v test-vol:/usr/share/nginx/html : 将 test-vol 数据卷挂载到容器中的/usr/share/nginx/html 目录下
+
+#### 2. --mount
+
+```
+docker run -d -it --name=test-nginx -p 8011:80 --mount source=test-vol, target=/usr/bin/share/nginx/html nginx:1.13.12
+```
+
+#### 3.区别
+
+使用-v时，如果宿主机上没有指定文件不会报错，会自动创建指定文件。
+
+当使用--mount时，如果宿主机上没有指定文件，不会自动创建文件。
+
+
+
+容器运行成功后，进入到/var/lib/docker/volumes 目录下，验证数据卷是否挂载成功。挂载成功后，无论是修改/var/lib/docer/volumes下的数据，还是进入到容器中修改/usr/bin/share/nginx/html的数据，都会同步修改对应的挂载目录，类似前端开发中的双向绑定。
+
+# Dockfile
+
+
+
