@@ -253,5 +253,48 @@ docker run -d -it --name=test-nginx -p 8011:80 --mount source=test-vol, target=/
 
 # Dockfile
 
+Dockerfile 是一个用来构建Docker镜像的文本文件，里面是一行行的指令。
 
+**Dockerfile的作用：**
 
+- 保证镜像安全。当拉取非官方的镜像时，可以说是完全的黑盒镜像，镜像被植入了病毒也是有可能的。可以根据Dockerfile来清楚的看到镜像每一层的指令是什么，是否安全可靠。
+- 重复利用镜像layer。镜像是由一层层的layer叠加而成，通过Dockerfile构建镜像时，如果发现本地存在可以重复利用的layer，就不会重复下载，这样可以节省存储空间。
+- 镜像维护与分享。通过Dockerfile构建、定制的镜像也更容易被维护和分享。如果需要新的定制，直接修改Dockerfile就可以了。
+
+# Docker 常用命令
+
+## 基本命令
+
+docker info: 检查当前容器的安装情况。
+
+docker version: 查看当前安装Docker的版本信息。
+
+## 容器相关
+
+### 生命周期相关
+
+docker run -d -p x:x --name image_id: 以后台方式运行容器
+
+docker create --name xxx nginx:latest: 创建一个新的容器，但是不启动
+
+docker start/stop/restart: 启动/停止/重启一个容器
+
+docker kill container_id: 杀死一个容器
+
+docker rm -vf contianer_id: 删除一个容器
+
+docker exec -it id bash: 进入到容器内部
+
+docker attach: 进入到容器内部
+
+### 操作相关
+
+docker ps -a | grep xxxx: 显示一个组件xxx的容器列表
+
+docker inspect id: 获取容器的元数据
+
+docker top id: 查看容器中运行的进程信息
+
+docker logs id: 查看容器的标准日志输出
+
+docker diff id: 列出容器创建以来内部文件的变化
